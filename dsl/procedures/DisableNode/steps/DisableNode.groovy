@@ -1,0 +1,4 @@
+$[/myProject/groovy/scripts/preamble.groovy.ignore]
+
+BigIPiControl plugin = new BigIPiControl()
+plugin.runStep('Disable Node', 'Disable Node', 'disableNode')
