@@ -51,6 +51,7 @@ task copyDependencies(type: Copy) {
         exclude group: "org.apache.commons", module: 'commons-lang'
         exclude group: "commons-collections", module: 'commons-collections'
         exclude group: "com.electriccloud.plugins", module: 'flowpdf-groovy-lib'
+        exclude group: 'f5'
     }
     into 'agent/deps/libs'
 }
