@@ -49,42 +49,42 @@ configuration:
     label: Credential
 
 procedures:
--
-  name: Enable Node
-  description: 'Sample procedure description'
-  # configuration field will be generated automatically
-  hasConfig: true
-  parameters:
-  -
-    name: partitionName
-    required: true
-    type: entry
-  -
-    name: nodeName
-    required: true
-    type: entry
+#~ -
+  #~ name: Enable Node
+  #~ description: 'Sample procedure description'
+  #~ # configuration field will be generated automatically
+  #~ hasConfig: true
+  #~ parameters:
+  #~ -
+    #~ name: partitionName
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: nodeName
+    #~ required: true
+    #~ type: entry
 
--
-  name: Disable Node
-  hasConfig: true
-  parameters:
-  -
-    name: partitionName
-    required: true
-    type: entry
-  -
-    name: nodeName
-    required: true
-    type: entry
+#~ -
+  #~ name: Disable Node
+  #~ hasConfig: true
+  #~ parameters:
+  #~ -
+    #~ name: partitionName
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: nodeName
+    #~ required: true
+    #~ type: entry
 
--
-  name: List Pools
-  hasConfig: true
-  parameters:
-  -
-    name: partitionName
-    required: true
-    type: entry
+#~ -
+  #~ name: List Pools
+  #~ hasConfig: true
+  #~ parameters:
+  #~ -
+    #~ name: partitionName
+    #~ required: true
+    #~ type: entry
 
 #~ -
   #~ name: Get Balancing Pool List
