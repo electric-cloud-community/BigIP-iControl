@@ -21,6 +21,12 @@ class BigIPiControl extends FlowPlugin {
         ]
     }
 
+    // Static variables that explain the n^2 complex relationship
+    // between nodes, pools, and pool members. General names were
+    // given to apply to enabled/disabled, available/unavailable, existant/nonexistant
+    public static final def NEGATIVE = 0              // Disabled/Unavailable/Nonexistant Results
+    public static final def POSITIVE_AND_NEGATIVE = 1 // Mixed Results
+    public static final def POSITIVE = 2              // Enabled/Available/Existant Results
 
     @Lazy
     Interfaces interfaces = {
@@ -54,7 +60,7 @@ class BigIPiControl extends FlowPlugin {
     private static void processResult(StepResult sr, String outcome, String summary, String resultPropertySheet, String value = "") {
         sr.setJobSummary(summary)
 
-        if (outcome != "error") {
+        if ((outcome != "error") && (value != "")) {
             sr.setOutcomeProperty(resultPropertySheet, value)
         }
 
@@ -158,14 +164,14 @@ class BigIPiControl extends FlowPlugin {
 
     // Checks the number of connections to a pool member
     // Used to confirm that a pool member is disabled
-    private int getPoolMemberActiveConnections() {
+    private int getPoolMemberActiveConnections(String[] poolNames, CommonAddressPort[][] commonAddressPort) {
         def Long result = -1
 
         // Retrieve the statistics for each pool
 
-        LocalLBPoolBindingStub pools = interfaces
+        def pools = interfaces
             .getLocalLBPool()
-            .get_member_statistics(poolName, commonAddressPortHelperPoolMember())
+            .get_member_statistics(poolNames, commonAddressPort)
 
         for (pool in pools) {
             // Retrieve the statistics for each pool member
@@ -185,10 +191,11 @@ class BigIPiControl extends FlowPlugin {
         }
 
         if (result < 0) {
-            throw new Exception("Could not locate node(s) ${nodeName}:${nodePort} in pool ${getPoolName()}")
+            throw new Exception("Could not locate node(s)")
         }
 
-        println "Active connection count for node(s) ${nodeName}:${nodePort} in ${getPoolName()} is $result"
+        println "Active connection count is ${result}"
+
         return result
     }
 
@@ -209,11 +216,8 @@ class BigIPiControl extends FlowPlugin {
         Long sleepInterval = Long.parseLong(sp.sleepInterval)
         boolean doWait = sp.doWait
 
-//        Long waitInterval = Long.parseLong(sp.waitInterval)*1000L
-        Long waitInterval = 1000L
-
         String partitionName = sp.partitionName.replaceAll('\\\\', '/')
-        if (partitionName.isEmpty()) {
+        if (!partitionName) {
             throw new Exception("Partition Name is empty")
         }
 
@@ -231,27 +235,27 @@ class BigIPiControl extends FlowPlugin {
         }
 
         String poolName = commonPrefix + sp.poolName.replaceAll("\\s+", "")
-        if (poolName.isEmpty()) {
+        if (!poolName) {
             throw new Exception("Partition Name is empty")
         }
 
         String[] poolNames = [poolName]
 
-        String membersNames = sp.membersNames
+        String[] membersNames = sp.membersNames
             .split(',')
             .join("\n")
             .split(/[\r\n]+/)
 
-        if (membersNames.isEmpty()) {
+        if (membersNames.size() == 0) {
             throw new Exception("Members list is empty")
         }
 
-        CommonAddressPort[][] commonAddressPort = [][] as CommonAddressPort[][]
-        CommonAddressPort plainAddressPort = []
-        membersNames.each {
-            def mem = it.trim()
-            if (!mem.isEmpty()) {
-                String[] addressPort = mem.split("[:]+")
+        def commonAddressPort = [][]
+        def plainAddressPort = []
+        for (member in membersNames) {
+            def mem = member.trim()
+            if (mem != "") {
+                String[] addressPort = mem.split(":")
                 plainAddressPort.add(new CommonAddressPort(
                     commonPrefix + addressPort[0],
                     Long.parseLong(addressPort[1])
@@ -261,10 +265,11 @@ class BigIPiControl extends FlowPlugin {
 
         commonAddressPort.add(plainAddressPort)
 
-        LocalLBPoolBindingStub pool = interfaces.getLocalLBPool()
-        pool.setTimeout(waitInterval)
+        def pool = interfaces.getLocalLBPool()
 
-        CommonEnabledState[] commonEnabledState = []
+        def plainEnabledState = []
+        def commonEnabledState = [][]
+        commonEnabledState.add(plainEnabledState)
 
         String outcome = "success"
         String summary = ""
@@ -272,36 +277,34 @@ class BigIPiControl extends FlowPlugin {
         try {
             if ((sp.setStatus == "enabled") || (sp.setStatus == "force_on")) {
                 membersNames.each {
-                    commonEnabledState.add(CommonEnabledState.STATE_ENABLED)
+                    plainEnabledState.add(CommonEnabledState.STATE_ENABLED)
                 }
 
-                pool.set_member_session_enabled_state(poolNames, commonAddressPort, commonEnabledState)
+                pool.set_member_session_enabled_state(poolNames, commonAddressPort as CommonAddressPort[][], commonEnabledState as CommonEnabledState[][])
                 if (sp.setStatus == "force_on") {
-                    pool.set_member_monitor_state(poolNames, commonAddressPort, commonEnabledState)
+                    pool.set_member_monitor_state(poolNames, commonAddressPort as CommonAddressPort[][], commonEnabledState as CommonEnabledState[][])
 
                     summary = "Successfully forced offline"
-                }
-                else {
+                } else {
                     summary = "Successfully enabled"
                 }
             } else if ((sp.setStatus == "disabled") || (sp.setStatus == "force_off")) {
-                pool.setTimeout(waitInterval)
                 membersNames.each {
-                    commonEnabledState.add(CommonEnabledState.STATE_DISABLED)
+                    plainEnabledState.add(CommonEnabledState.STATE_DISABLED)
                 }
 
-                pool.set_member_session_enabled_state(poolNames, commonAddressPort, commonEnabledState)
+                pool.set_member_session_enabled_state(poolNames, commonAddressPort as CommonAddressPort[][], commonEnabledState as CommonEnabledState[][])
                 if (sp.setStatus == "force_off") {
-                    pool.set_member_monitor_state(poolNames, commonAddressPort, commonEnabledState)
+                    pool.set_member_monitor_state(poolNames, commonAddressPort as CommonAddressPort[][], commonEnabledState as CommonEnabledState[][])
 
                     summary = "Successfully forced offline"
                 } else {
                     if (doWait) {
-                        def currentConnections = getPoolMemberActiveConnections()
+                        def currentConnections = getPoolMemberActiveConnections(poolNames, commonAddressPort as CommonAddressPort[][])
                         while (currentConnections > 0) {
                             println("Waiting for ${currentConnections} to close, sleep for ${sleepInterval} second(s)")
                             sleep(sleepInterval * 1000L, { println("Waiting aborted!"); return true })
-                            currentConnections = getPoolMemberActiveConnections()
+                            currentConnections = getPoolMemberActiveConnections(poolNames, commonAddressPort as CommonAddressPort[][])
                         }
                         println("All connections closed, done waiting.")
                     }
@@ -321,11 +324,9 @@ class BigIPiControl extends FlowPlugin {
 
 
         String resultPropertySheet = sp.resultPropertySheet;
-        if (resultPropertySheet.isEmpty()) {
-            resultPropertySheet = "/myJob/clone"
+        if (resultPropertySheet == "") {
+            resultPropertySheet = "/myJob/poolMemberStatus"
             log.info("Assumed result property sheet: " + resultPropertySheet)
-        } else {
-            resultPropertySheet = resultPropertySheet.trim()
         }
 
         processResult(sr, outcome, summary, resultPropertySheet, data)

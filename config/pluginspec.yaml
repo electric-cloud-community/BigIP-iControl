@@ -33,11 +33,11 @@ configuration:
     documentation: Third-party endpoint to connect to.
     required: false
     type: entry
-    label: Endpoint
+    label: Hostname
   -
     name: port
     required: true
-    type: integer
+    type: entry
   -
     name: credential
     documentation: A sample credential
