@@ -1,13 +1,10 @@
 pluginInfo:
-  # This is default sample specification
-  # Feel free to change it
-  # Call pdk showdoc pluginspec to see the list of available fields and their description
   pluginName: 'BigIP-iControl'
   version: '1.0.0'
-  description: 'Sample plugin description'
-  author: 'none'
-  supportUrl: 'none'
-  category: 'Utilities'
+  description: 'This plugin allows to work with F5 Big-IP via iControl SOAP API.'
+  author: 'CloudBees'
+  supportUrl: 'https://electric-cloud.com/support'
+  category: 'Resource Management'
   shell: 'ec-groovy'
 
 # Plugin configuration description
@@ -265,7 +262,9 @@ procedures:
   #~ -
     #~ name: memberName
     #~ label: Member Name
-    #~ documentation: A name for this member.
+    #~ documentation: |
+      #~ Name of the member in format: /<partition name>/<node name>:<port>
+      #~ Example: /Common/abc_node:80
     #~ required: true
     #~ type: entry
   #~ -
@@ -291,18 +290,22 @@ procedures:
     required: true
     type: entry
   -
-    name: memberName
-    label: Member Name
-    documentation: A name for this member.
+    name: membersNames
+    label: Members Names
+    documentation: |
+      Names of the members in format: <node name>:<port> one per line
+      Example:
+        abc_node:80
+        def_node:443
     required: true
-    type: entry
+    type: textarea
   -
     name: setStatus
     label: Status
     htmlDocumentation: |
       Desired status of the pool member.<br/>Details:<br/><ul><li><a href="https://devcentral.f5.com/articles/icontrol-rest-working-with-pool-members">iControl REST: Working with Pool Members</a></li><li><a href="https://support.f5.com/csp/article/K13310">K13310: Disabling nodes or pool members for maintenance (11.x - 14.x)</a></li></ul>
     type: select
-    required: 1
+    required: true
     value: enabled
     options:
       -
@@ -314,6 +317,33 @@ procedures:
       -
         name: Forced Offline (Only active connections allowed)
         value: force_off
+  -
+    name: doWait
+    label: Wait For Existing Connections
+    documentation: "Wait for all active connections to close after disabling the node in the pool and before completing the step."
+    required: false
+    type: checkbox
+    checkedValue: true
+    uncheckedValue: false
+    initiallyChecked: false
+    dependsOn: setStatus
+    condition: ${setStatus} == "disabled"
+  -
+    name: sleepInterval
+    label: Sleep Interval
+    documentation: Amount of seconds to wait between active connections checks.
+    required: false
+    type: entry
+    value: 1
+    dependsOn: setStatus
+    condition: ${setStatus} == "disabled"
+  #~ -
+    #~ name: waitInterval
+    #~ label: Wait Interval
+    #~ documentation: Amount of seconds to wait between active connections checks.
+    #~ required: false
+    #~ type: entry
+    #~ value: 1
   -
     name: resultPropertySheet
     label: Result Property Sheet
@@ -339,7 +369,9 @@ procedures:
   #~ -
     #~ name: memberName
     #~ label: Member Name
-    #~ documentation: A name for this member.
+    #~ documentation: |
+      #~ Name of the member in format: /<partition name>/<node name>:<port>
+      #~ Example: /Common/abc_node:80
     #~ required: true
     #~ type: entry
   #~ -
@@ -379,8 +411,8 @@ procedures:
         #~ name: Throw exception
         #~ value: ERROR
   #~ -
-    #~ name: member
-    #~ label: Member
+    #~ name: memberName
+    #~ label: Member Name
     #~ required: true
     #~ type: entry
     #~ documentation: |
