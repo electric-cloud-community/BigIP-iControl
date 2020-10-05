@@ -54,6 +54,8 @@ class BigIPiControl extends FlowPlugin {
 
             System.exit(-1)
         }
+
+        log.info("Connection successfully checked")
     }
 
     // === check connection ends ===
@@ -61,9 +63,18 @@ class BigIPiControl extends FlowPlugin {
     private static void processResult(StepResult sr, String outcome, String summary, String resultPropertySheet, String value = "") {
         sr.setJobSummary(summary)
 
-        if ((outcome != "error") && (value != "")) {
-            sr.setOutcomeProperty(resultPropertySheet, value)
-        }
+//        if ((outcome != "error") && (value != "")) {
+//            sr.setOutcomeProperty(resultPropertySheet, value)
+//        }
+
+        sr.setJobStepOutcome(outcome)
+        sr.setJobStepSummary(summary)
+
+        sr.apply()
+    }
+
+    private static void processResult(StepResult sr, String outcome, String summary) {
+        sr.setJobSummary(summary)
 
         sr.setJobStepOutcome(outcome)
         sr.setJobStepSummary(summary)
@@ -192,12 +203,14 @@ class BigIPiControl extends FlowPlugin {
             partitionName.replaceFirst('[/]{2,}$', '/')
         }
 
+        log.info("partitionName:"+partitionName)
+
         String poolName = partitionName + sp.poolName.replaceAll("\\s+", "")
         if (!poolName) {
             throw new RuntimeException("Pool Name is empty")
         }
 
-        String[] poolNames = [poolName]
+        log.info("poolName:"+poolName)
 
         String[] membersNames = sp.membersNames
             .split(',')
@@ -211,6 +224,7 @@ class BigIPiControl extends FlowPlugin {
             def mem = member.trim()
             if (mem != "") {
                 String[] addressPort = mem.split(":")
+                log.info("addressPort:"+addressPort)
                 plainAddressPort.add(new CommonAddressPort(
                     partitionName + addressPort[0],
                     Long.parseLong(addressPort[1])
@@ -235,16 +249,38 @@ class BigIPiControl extends FlowPlugin {
         String data = ""
         try {
             if (sp.setStatus == "enabled") {
-                pool.set_member_session_enabled_state(poolNames, [plainAddressPort] as CommonAddressPort[][], [plainEnabledState] as CommonEnabledState[][])
+                log.info("Enable members...")
+
+                pool.set_member_session_enabled_state(
+                    [poolName] as String[],
+                    [plainAddressPort] as CommonAddressPort[][],
+                    [plainEnabledState] as CommonEnabledState[][]
+                )
+
                 summary = "Successfully enabled"
             } else if ((sp.setStatus == "disabled") || (sp.setStatus == "force_off")) {
-                pool.set_member_session_enabled_state(poolNames, [plainAddressPort] as CommonAddressPort[][], [plainEnabledState] as CommonEnabledState[][])
+                log.info("Disable members...")
+
+                pool.set_member_session_enabled_state(
+                    [poolName] as String[],
+                    [plainAddressPort] as CommonAddressPort[][],
+                    [plainEnabledState] as CommonEnabledState[][]
+                )
+
                 if (sp.setStatus == "force_off") {
-                    pool.set_member_monitor_state(poolNames, [plainAddressPort] as CommonAddressPort[][], [plainEnabledState] as CommonEnabledState[][])
+                    log.info("Force off members...")
+
+                    pool.set_member_monitor_state(
+                        [poolName] as String[],
+                        [plainAddressPort] as CommonAddressPort[][],
+                        [plainEnabledState] as CommonEnabledState[][]
+                    )
+
                     summary = "Successfully forced offline"
                 } else {
                     summary = "Successfully disabled"
                 }
+                log.info("Done")
             } else {
                 throw new RuntimeException("Unknown desired status")
             }
@@ -254,16 +290,18 @@ class BigIPiControl extends FlowPlugin {
             log.error(e.stackTrace)
             outcome = "error"
             summary = "Failed to set status: " + e.message
+            log.error(summary)
         }
 
 
-        String resultPropertySheet = sp.resultPropertySheet
-        if (resultPropertySheet == "") {
-            resultPropertySheet = "/myJob/poolMemberStatus"
-            log.info("Assumed result property sheet: " + resultPropertySheet)
-        }
+//        String resultPropertySheet = sp.resultPropertySheet
+//        if (resultPropertySheet == "") {
+//            resultPropertySheet = "/myJob/poolMemberStatus"
+//            log.info("Assumed result property sheet: " + resultPropertySheet)
+//        }
 
-        processResult(sr, outcome, summary, resultPropertySheet, data)
+//        processResult(sr, outcome, summary, resultPropertySheet, data)
+        processResult(sr, outcome, summary)
     }
 
 // === step ends ===
