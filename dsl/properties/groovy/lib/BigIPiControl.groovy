@@ -82,96 +82,96 @@ class BigIPiControl extends FlowPlugin {
         sr.apply()
     }
 
-    //~ /**
-    //~ * enableNode - Enable Node/Enable Node
-    //~ * https://clouddocs.f5.com/api/icontrol-rest/APIRef_tm_ltm_node.html
-    //~ * @param config (required: true)
-    //~ * @param partitionName (required: true)
-    //~ * @param nodeName (required: true)
-
-    //~ */
-    //~ def enableNode(StepParameters p, StepResult sr) {
-    //~ // Use this parameters wrapper for convenient access to your parameters
-    //~ EnableNodeParameters sp = EnableNodeParameters.initParameters(p)
-
-    //~ def nodeStub = interfaces.getLocalLBNodeAddressV2()
-    //~ def nodes = nodeStub.get_list()
-    //~ boolean found = false
-    //~ String fullNodeName = "/$sp.partitionName/$sp.nodeName"
-    //~ nodes.each {
-    //~ log.info("Found node: $it")
-    //~ if (it == fullNodeName) {
-    //~ found = true
-    //~ log.info "Node $fullNodeName exists"
-    //~ }
-    //~ }
-
-    //~ if (!found) {
-    //~ context.bailOut("Cannot find node $fullNodeName")
-    //~ }
-
-    //~ def status = nodeStub.get_session_status([fullNodeName] as String[])
-    //~ log.info "Node status: $status"
-
-    //~ def newState = CommonEnabledState.STATE_ENABLED as CommonEnabledState[]
-    //~ nodeStub.set_session_enabled_state([fullNodeName] as String[], newState)
-
-    //~ log.info "Enabled node $fullNodeName"
-    //~ }
-
-
-    //~ /**
-    //~ * disableNode - Disable Node/Disable Node
-    //~ * Add your code into this method and it will be called when the step runs
-    //~ * @param config (required: true)
-    //~ * @param partitionName (required: true)
-    //~ * @param nodeName (required: true)
-
-    //~ */
-    //~ def disableNode(StepParameters p, StepResult sr) {
-    //~ // Use this parameters wrapper for convenient access to your parameters
-    //~ DisableNodeParameters sp = DisableNodeParameters.initParameters(p)
-
-    //~ def nodeStub = interfaces.getLocalLBNodeAddressV2()
-    //~ def nodes = nodeStub.get_list()
-    //~ boolean found = false
-    //~ String fullNodeName = "/$sp.partitionName/$sp.nodeName"
-    //~ nodes.each {
-    //~ log.info("Found node: $it")
-    //~ if (it == fullNodeName) {
-    //~ found = true
-    //~ log.info "Node $fullNodeName exists"
-    //~ }
-    //~ }
-
-    //~ if (!found) {
-    //~ context.bailOut("Cannot find node $fullNodeName")
-    //~ }
-
-    //~ def status = nodeStub.get_session_status([fullNodeName] as String[])
-    //~ log.info "Node status: $status"
-
-    //~ def newState = CommonEnabledState.STATE_DISABLED as CommonEnabledState[]
-    //~ nodeStub.set_session_enabled_state([fullNodeName] as String[], newState)
-
-    //~ log.info "Disabled node $fullNodeName"
-    //~ }
-
-//~ /**
-    //~ * listPools - List Pools/List Pools
-    //~ * Add your code into this method and it will be called when the step runs
-    //~ * @param config (required: true)
-    //~ * @param partitionName (required: true)
-
-    //~ */
-    //~ def listPools(StepParameters p, StepResult sr) {
-    //~ // Use this parameters wrapper for convenient access to your parameters
-    //~ ListPoolsParameters sp = ListPoolsParameters.initParameters(p)
-    //~ def poolStub = interfaces.localLBPool
-    //~ poolStub.get_list().each {
-    //~ log.info "Found pool: $it"
-    //~ }
-    //~ }
+//    /**
+//     * enableNode - Enable Node/Enable Node
+//     * https://clouddocs.f5.com/api/icontrol-rest/APIRef_tm_ltm_node.html
+//     * @param config (required: true)
+//     * @param partitionName (required: true)
+//     * @param nodeName (required: true)
+//
+//     */
+//    def enableNode(StepParameters p, StepResult sr) {
+//        // Use this parameters wrapper for convenient access to your parameters
+//        EnableNodeParameters sp = EnableNodeParameters.initParameters(p)
+//
+//        def nodeStub = interfaces.getLocalLBNodeAddressV2()
+//        def nodes = nodeStub.get_list()
+//        boolean found = false
+//        String fullNodeName = "/$sp.partitionName/$sp.nodeName"
+//        nodes.each {
+//            log.info("Found node: $it")
+//            if (it == fullNodeName) {
+//                found = true
+//                log.info "Node $fullNodeName exists"
+//            }
+//        }
+//
+//        if (!found) {
+//            context.bailOut("Cannot find node $fullNodeName")
+//        }
+//
+//        def status = nodeStub.get_session_status([fullNodeName] as String[])
+//        log.info "Node status: $status"
+//
+//        def newState = CommonEnabledState.STATE_ENABLED as CommonEnabledState[]
+//        nodeStub.set_session_enabled_state([fullNodeName] as String[], newState)
+//
+//        log.info "Enabled node $fullNodeName"
+//    }
+//
+//
+//    /**
+//     * disableNode - Disable Node/Disable Node
+//     * Add your code into this method and it will be called when the step runs
+//     * @param config (required: true)
+//     * @param partitionName (required: true)
+//     * @param nodeName (required: true)
+//
+//     */
+//    def disableNode(StepParameters p, StepResult sr) {
+//        // Use this parameters wrapper for convenient access to your parameters
+//        DisableNodeParameters sp = DisableNodeParameters.initParameters(p)
+//
+//        def nodeStub = interfaces.getLocalLBNodeAddressV2()
+//        def nodes = nodeStub.get_list()
+//        boolean found = false
+//        String fullNodeName = "/$sp.partitionName/$sp.nodeName"
+//        nodes.each {
+//            log.info("Found node: $it")
+//            if (it == fullNodeName) {
+//                found = true
+//                log.info "Node $fullNodeName exists"
+//            }
+//        }
+//
+//        if (!found) {
+//            context.bailOut("Cannot find node $fullNodeName")
+//        }
+//
+//        def status = nodeStub.get_session_status([fullNodeName] as String[])
+//        log.info "Node status: $status"
+//
+//        def newState = CommonEnabledState.STATE_DISABLED as CommonEnabledState[]
+//        nodeStub.set_session_enabled_state([fullNodeName] as String[], newState)
+//
+//        log.info "Disabled node $fullNodeName"
+//    }
+//
+///**
+// * listPools - List Pools/List Pools
+// * Add your code into this method and it will be called when the step runs
+// * @param config (required: true)
+// * @param partitionName (required: true)
+//
+// */
+//    def listPools(StepParameters p, StepResult sr) {
+//        // Use this parameters wrapper for convenient access to your parameters
+//        ListPoolsParameters sp = ListPoolsParameters.initParameters(p)
+//        def poolStub = interfaces.localLBPool
+//        poolStub.get_list().each {
+//            log.info "Found pool: $it"
+//        }
+//    }
 
 /**
  * changeBalancingPoolMemberStatus - Change Balancing Pool Member Status/Change Balancing Pool Member Status
@@ -188,7 +188,7 @@ class BigIPiControl extends FlowPlugin {
 
         String partitionName = sp.partitionName.replaceAll('\\\\', '/')
         if (!partitionName) {
-            throw new RuntimeException("Partition Name is empty")
+            context.bailOut("Partition Name is empty")
         }
 
         if (!partitionName.startsWith('/')) {
@@ -203,14 +203,14 @@ class BigIPiControl extends FlowPlugin {
             partitionName.replaceFirst('[/]{2,}$', '/')
         }
 
-        log.info("partitionName:"+partitionName)
+        log.info("Prepared Partition Name: " + partitionName)
 
         String poolName = partitionName + sp.poolName.replaceAll("\\s+", "")
         if (!poolName) {
-            throw new RuntimeException("Pool Name is empty")
+            context.bailOut("Pool Name is empty")
         }
 
-        log.info("poolName:"+poolName)
+        log.info("Prepared Pool Name: " + poolName)
 
         String[] membersNames = sp.membersNames
             .split(',')
@@ -219,29 +219,29 @@ class BigIPiControl extends FlowPlugin {
             .join("\n")
             .split(/[\r\n]+/)
 
-        def plainAddressPort = []
+        def plainMembers = []
         for (member in membersNames) {
             def mem = member.trim()
             if (mem != "") {
                 String[] addressPort = mem.split(":")
-                log.info("addressPort:"+addressPort)
-                plainAddressPort.add(new CommonAddressPort(
+                log.info("Prepared Member: " + addressPort)
+                plainMembers.add(new CommonAddressPort(
                     partitionName + addressPort[0],
                     Long.parseLong(addressPort[1])
                 ))
             }
         }
 
-        if (plainAddressPort.size() == 0) {
-            throw new RuntimeException("Members list is empty")
+        if (plainMembers.size() == 0) {
+            context.bailOut("Members list is empty")
         }
 
         def pool = interfaces.getLocalLBPool()
 
         CommonEnabledState state = (sp.setStatus == "enabled") ? CommonEnabledState.STATE_ENABLED : CommonEnabledState.STATE_DISABLED
-        def plainEnabledState = []
+        def plainEnabledStates = []
         membersNames.each {
-            plainEnabledState.add(state)
+            plainEnabledStates.add(state)
         }
 
         String outcome = "success"
@@ -253,8 +253,8 @@ class BigIPiControl extends FlowPlugin {
 
                 pool.set_member_session_enabled_state(
                     [poolName] as String[],
-                    [plainAddressPort] as CommonAddressPort[][],
-                    [plainEnabledState] as CommonEnabledState[][]
+                    [plainMembers] as CommonAddressPort[][],
+                    [plainEnabledStates] as CommonEnabledState[][]
                 )
 
                 summary = "Successfully enabled"
@@ -263,8 +263,8 @@ class BigIPiControl extends FlowPlugin {
 
                 pool.set_member_session_enabled_state(
                     [poolName] as String[],
-                    [plainAddressPort] as CommonAddressPort[][],
-                    [plainEnabledState] as CommonEnabledState[][]
+                    [plainMembers] as CommonAddressPort[][],
+                    [plainEnabledStates] as CommonEnabledState[][]
                 )
 
                 if (sp.setStatus == "force_off") {
@@ -272,8 +272,8 @@ class BigIPiControl extends FlowPlugin {
 
                     pool.set_member_monitor_state(
                         [poolName] as String[],
-                        [plainAddressPort] as CommonAddressPort[][],
-                        [plainEnabledState] as CommonEnabledState[][]
+                        [plainMembers] as CommonAddressPort[][],
+                        [plainEnabledStates] as CommonEnabledState[][]
                     )
 
                     summary = "Successfully forced offline"
