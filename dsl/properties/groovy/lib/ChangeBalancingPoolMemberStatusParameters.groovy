@@ -21,18 +21,6 @@ class ChangeBalancingPoolMemberStatusParameters {
     * Label: Status, type: select
     */
     String setStatus
-    /**
-    * Label: Wait For Existing Connections, type: checkbox
-    */
-    boolean doWait
-    /**
-    * Label: Sleep Interval, type: entry
-    */
-    String sleepInterval
-    /**
-    * Label: Result Property Sheet, type: entry
-    */
-    String resultPropertySheet
 
     static ChangeBalancingPoolMemberStatusParameters initParameters(StepParameters sp) {
         ChangeBalancingPoolMemberStatusParameters parameters = new ChangeBalancingPoolMemberStatusParameters()
@@ -45,14 +33,8 @@ class ChangeBalancingPoolMemberStatusParameters {
         parameters.membersNames = membersNames
         def setStatus = sp.getRequiredParameter('setStatus').value
         parameters.setStatus = setStatus
-        def doWait = sp.getParameter('doWait').value == "true"
-        parameters.doWait = doWait
-        def sleepInterval = sp.getParameter('sleepInterval').value
-        parameters.sleepInterval = sleepInterval
-        def resultPropertySheet = sp.getRequiredParameter('resultPropertySheet').value
-        parameters.resultPropertySheet = resultPropertySheet
 
         return parameters
     }
 }
-// DO NOT EDIT THIS BLOCK ABOVE ^^^=== Parameters ends, checksum: 20212e632fe5374fb4e1f6a482c550b0 ===
+// DO NOT EDIT THIS BLOCK ABOVE ^^^=== Parameters ends, checksum: f0bb6f71a2e26032975e15c4f9384b1c ===

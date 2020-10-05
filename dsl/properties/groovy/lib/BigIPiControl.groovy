@@ -170,7 +170,6 @@ class BigIPiControl extends FlowPlugin {
  * @param poolName (required: true)
  * @param membersNames (required: true)
  * @param setStatus (required: true)
- * @param resultPropertySheet (required: true)
 
  */
     def changeBalancingPoolMemberStatus(StepParameters p, StepResult sr) {
