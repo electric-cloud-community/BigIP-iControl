@@ -1,13 +1,10 @@
 pluginInfo:
-  # This is default sample specification
-  # Feel free to change it
-  # Call pdk showdoc pluginspec to see the list of available fields and their description
   pluginName: 'BigIP-iControl'
   version: '1.0.0'
-  description: 'Sample plugin description'
-  author: 'none'
-  supportUrl: 'none'
-  category: 'Utilities'
+  description: 'This plugin allows to work with F5 Big-IP via iControl SOAP API.'
+  author: 'CloudBees'
+  supportUrl: 'https://electric-cloud.com/support'
+  category: 'Resource Management'
   shell: 'ec-groovy'
 
 # Plugin configuration description
@@ -33,13 +30,17 @@ configuration:
     label: Description
   -
     name: hostname
-    documentation: Third-party endpoint to connect to.
-    required: false
-    type: entry
-    label: Endpoint
-  - name: port
+    label: Hostname
+    documentation: Host name or IP-address of the iControl SOAP instance.
     required: true
-    type: integer
+    type: entry
+  -
+    name: port
+    label: Port
+    documentation: Port number of the iControl SOAP instance.
+    required: true
+    type: entry
+    value: 443
   -
     name: credential
     documentation: A sample credential
@@ -48,32 +49,410 @@ configuration:
     label: Credential
 
 procedures:
+#~ -
+  #~ name: Enable Node
+  #~ description: 'Sample procedure description'
+  #~ # configuration field will be generated automatically
+  #~ hasConfig: true
+  #~ parameters:
+  #~ -
+    #~ name: partitionName
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: nodeName
+    #~ required: true
+    #~ type: entry
+
+#~ -
+  #~ name: Disable Node
+  #~ hasConfig: true
+  #~ parameters:
+  #~ -
+    #~ name: partitionName
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: nodeName
+    #~ required: true
+    #~ type: entry
+
+#~ -
+  #~ name: List Pools
+  #~ hasConfig: true
+  #~ parameters:
+  #~ -
+    #~ name: partitionName
+    #~ required: true
+    #~ type: entry
+
+#~ -
+  #~ name: Get Balancing Pool List
+  #~ hasConfig: true
+  #~ parameters:
+  #~ -
+    #~ name: partitionName
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: resultPropertySheet
+    #~ label: Result Property Sheet
+    #~ documentation: Results will be saved into this property/property sheet.
+    #~ required: true
+    #~ type: entry
+    #~ value: /myJob/poolGetList
+
+#~ -
+  #~ name: Get Balancing Pool
+  #~ hasConfig: true
+  #~ parameters:
+  #~ -
+    #~ name: partitionName
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: poolName
+    #~ label: Pool Name
+    #~ documentation: Name of the balancing pool.
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: resultPropertySheet
+    #~ label: Result Property Sheet
+    #~ documentation: Results will be saved into this property/property sheet.
+    #~ required: true
+    #~ type: entry
+    #~ value: /myJob/poolGet
+
+#~ -
+  #~ name: Delete Balancing Pool
+  #~ hasConfig: true
+  #~ parameters:
+  #~ -
+    #~ name: partitionName
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: poolName
+    #~ label: Pool Name
+    #~ documentation: Name of the balancing pool.
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: resultPropertySheet
+    #~ label: Result Property Sheet
+    #~ documentation: Results will be saved into this property/property sheet.
+    #~ required: true
+    #~ type: entry
+    #~ value: /myJob/poolDelete
+
+#~ -
+  #~ name: Create Or Update Balancing Pool
+  #~ # https://clouddocs.f5.com/api/icontrol-rest/APIRef_tm_ltm_pool.html
+  #~ description: 'Sample procedure description'
+  #~ hasConfig: true
+  #~ parameters:
+  #~ -
+    #~ name: updateAction
+    #~ label: Update Action
+    #~ htmlDocumentation: |
+      #~ This parameter controls the update of a balancing pool if one with the same name exists already:
+      #~ <ul><li><b><code>Do Nothing</code></b> <i>(Default)</i> -- Take no action, return silently.</li><li><b><code>Remove and Create</code></b> -- Remove existing balancing pool and Create a new one.</li><li><b><code>Selective Update</code></b> -- Update existing balancing pool for only parameters which have changed.</li><li><b><code>Throw exception</code></b> -- Do not update. Throw an error.</li></ul>
+    #~ type: select
+    #~ required: 1
+    #~ value: 0
+    #~ options:
+      #~ -
+        #~ name: Do Nothing
+        #~ value: 0
+      #~ -
+        #~ name: Selective Update
+        #~ value: PATCH
+      #~ -
+        #~ name: Remove and Create
+        #~ value: PUT
+      #~ -
+        #~ name: Throw exception
+        #~ value: ERROR
+  #~ -
+    #~ name: partitionName
+    #~ label: Partition Name
+    #~ required: true
+    #~ type: entry
+    #~ documentation: Name of the partition.
+  #~ -
+    #~ name: poolName
+    #~ label: Pool Name
+    #~ documentation: Name of the balancing pool.
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: optionalParameters
+    #~ label: Optional Parameters
+    #~ documentation: |
+      #~ Available parameters:
+      #~ * description - User defined description.
+      #~ * allowNat - Specifies whether the pool can load balance NAT connections. The default value is yes.
+      #~ * allowSnat - Specifies whether the pool can load balance SNAT connections. The default value is yes.
+      #~ * appService - The application service to which the object belongs.
+      #~ * autoscaleGroupId - Autoscale-group ID to which pool members belong to.
+      #~ * gatewayFailsafeDevice - Specifies that the pool is a gateway failsafe pool in a redundant configuration. This string identifies the device that will failover when the monitor reports the pool member down. By default the device string is empty.
+      #~ * ignorePersistedWeight - Do not count the weight of persisted connections on pool members when making load balancing decisions.
+      #~ * ipTosToClient - Specifies the Type of Service (ToS) level to use when sending packets to a client. 65534 (mimic) specifies that the system sets the ToS level of outgoing packets to the same ToS level of the most-recently received incoming packet. The default value is 65535 (pass-through).
+      #~ * ipTosToServer - Specifies the Type of Service (ToS) level to use when sending packets to a server. 65534 (mimic) specifies that the system sets the ToS level of outgoing packets to the same ToS level of the most-recently received incoming packet. The default value is 65535 (pass-through).
+      #~ * linkQosToClient - Specifies the Quality of Service (QoS) level to use when sending packets to a client. The default value is 65535 (pass-through).
+      #~ * linkQosToServer - Specifies the Quality of Service (QoS) level to use when sending packets to a server. The default value is 65535 (pass-through).
+      #~ * loadBalancingMode - Specifies the modes that the system uses to load balance name resolution requests among the members of this pool. See "help pool" for a description of each loading balancing mode.
+      #~ * minActiveMembers - Specifies the minimum number of members that must be up for traffic to be confined to a priority group when using priority-based activation. The default value is 0 (zero). An active member is a member that is up (not marked down) and is handling fewer connections than its connection limit.
+      #~ * minUpMembers - Specifies the minimum number of pool members that must be up; otherwise, the system takes the action specified in the min-up-members-action option. Use this option for gateway pools in a redundant system where a unit number is applied to a pool. This indicates that the pool is only configured on the specified unit.
+      #~ * minUpMembersAction - Specifies the action to take if the min-up-members-checking is enabled and the number of active pool members falls below the number specified in min-up-members. The default value is failover.
+      #~ * minUpMembersChecking - Enables or disables the min-up-members feature. If you enable this feature, you must also specify a value for both the min-up-members and min-up-members-action options.
+      #~ * monitor - Specifies the health monitors that the system uses to determine whether it can use this pool for load balancing. The monitor marks the pool up or down based on whether the monitor(s) are successful. You can specify a single monitor, multiple monitors "http and https", or a "min" rule, "min 1 of { http https }". You may remove the monitor by specifying "none".
+      #~ * tmPartition - Displays the administrative partition within which the pool resides.
+      #~ * queueDepthLimit - Specifies the maximum number of connections that may simultaneously be queued to go to any member of this pool. The default is zero which indicates there is no limit.
+      #~ * queueOnConnectionLimit - Enable or disable queuing connections when pool member or node connection limits are reached. When queuing is not enabled, new connections are reset when connection limits are met.
+      #~ * queueTimeLimit - Specifies the maximum time, in milliseconds, a connection will remain enqueued. The default is zero which indicates there is no limit.
+      #~ * reselectTries - Specifies the number of times the system tries to contact a pool member after a passive failure. A passive failure consists of a server-connect failure or a failure to receive a data response within a user-specified interval. The default is 0 (zero), which indicates no reselect attempts.
+      #~ * serviceDownAction - Specifies the action to take if the service specified in the pool is marked down. The default value is none.
+      #~ * slowRampTime - Specifies, in seconds, the ramp time for the pool. This provides the ability to cause a pool member that has just been enabled, or marked up, to receive proportionally less traffic than other members in the pool. The proportion of traffic the member accepts is determined by how long the member has been up in comparison to the slow-ramp-time setting for the pool. For example, if the load-balancing-mode of a pool is round-robin, and it has a slow-ramp-time of 60 seconds, when a pool member has been up for only 30 seconds, the pool member receives approximately half the amount of new traffic as other pool members that have been up for more than 60 seconds. After the pool member has been up for 45 seconds, it receives approximately three quarters of the new traffic. The slow ramp time is particularly useful when used with the least-connections-member load balancing mode. The default value is 10.
+      #~ * trafficAccelerationStatus - Not described in the official documentation. Please consult: F5 Support
+    #~ required: false
+    #~ type: textarea
+  #~ -
+    #~ name: resultPropertySheet
+    #~ label: Result Property Sheet
+    #~ documentation: Results will be saved into this property/property sheet.
+    #~ required: true
+    #~ type: entry
+    #~ value: /myJob/poolCreateOrUpdate
+
+#~ -
+  #~ name: Get Balancing Pool Member List
+  #~ hasConfig: true
+  #~ parameters:
+  #~ -
+    #~ name: partitionName
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: poolName
+    #~ label: Pool Name
+    #~ documentation: Name of the balancing pool.
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: resultPropertySheet
+    #~ label: Result Property Sheet
+    #~ documentation: Results will be saved into this property/property sheet.
+    #~ required: true
+    #~ type: entry
+    #~ value: /myJob/poolMemberGetList
+
+#~ -
+  #~ name: Get Balancing Pool Member
+  #~ hasConfig: true
+  #~ parameters:
+  #~ -
+    #~ name: partitionName
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: poolName
+    #~ label: Pool Name
+    #~ documentation: Name of the balancing pool.
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: memberName
+    #~ label: Member Name
+    #~ documentation: |
+      #~ Name of the member in format: /<partition name>/<node name>:<port>
+      #~ Example: /Common/abc_node:80
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: resultPropertySheet
+    #~ label: Result Property Sheet
+    #~ documentation: Results will be saved into this property/property sheet.
+    #~ required: true
+    #~ type: entry
+    #~ value: /myJob/poolMemberGet
+
 -
-  name: Enable Node
-  description: 'Sample procedure description'
-  # configuration field will be generated automatically
+  name: Change Balancing Pool Member Status
   hasConfig: true
   parameters:
   -
     name: partitionName
     required: true
     type: entry
-  - name: nodeName
+  -
+    name: poolName
+    label: Pool Name
+    documentation: Name of the balancing pool.
     required: true
     type: entry
+  -
+    name: membersNames
+    label: Members Names
+    documentation: |
+      Names of the members in format: "node name":"port" one per line
+      Example:
+        abc_node:80
+        def_node:443
+    required: true
+    type: textarea
+  -
+    name: setStatus
+    label: Status
+    htmlDocumentation: |
+      Desired status of the pool member.<br/>Details:<br/><ul><li><a href="https://devcentral.f5.com/articles/icontrol-rest-working-with-pool-members">iControl REST: Working with Pool Members</a></li><li><a href="https://support.f5.com/csp/article/K13310">K13310: Disabling nodes or pool members for maintenance (11.x - 14.x)</a></li></ul>
+    type: select
+    required: true
+    value: enabled
+    options:
+      -
+        name: Enabled
+        value: enabled
+      -
+        name: Disabled
+        value: disabled
+  -
+    name: force
+    label: Force enable/disable
+    documentation: TODO
+    type: checkbox
+    initiallyChecked: false
+    checkedValue: true
+    uncheckedValue: false
+    required: false
 
-- name: Disable Node
-  hasConfig: true
-  parameters:
-    - name: partitionName
-      required: true
-      type: entry
-    - name: nodeName
-      required: true
-      type: entry
-- name: List Pools
-  hasConfig: true
-  parameters:
-    - name: partitionName
-      required: true
-      type: entry
+  -
+    name: doWait
+    label: Wait For Existing Connections
+    documentation: "Wait for all active connections to close after disabling the node in the pool and before completing the step."
+    required: false
+    type: checkbox
+    checkedValue: true
+    uncheckedValue: false
+    initiallyChecked: false
+    dependsOn: setStatus
+    condition: ${setStatus} == "disabled" AND force == "false"
+  -
+    name: sleepInterval
+    label: Sleep Interval
+    documentation: Amount of seconds to wait between active connections checks.
+    required: false
+    type: entry
+    value: 1
+    dependsOn: setStatus, doWait, force
+    condition: ${setStatus} == "disabled" AND ${doWait} == "true"
+  #~ -
+    #~ name: resultPropertySheet
+    #~ label: Result Property Sheet
+    #~ documentation: Results will be saved into this property/property sheet.
+    #~ required: true
+    #~ type: entry
+    #~ value: /myJob/poolMemberStatus
+
+#~ -
+  #~ name: Delete Balancing Pool Member
+  #~ hasConfig: true
+  #~ parameters:
+  #~ -
+    #~ name: partitionName
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: poolName
+    #~ label: Pool Name
+    #~ documentation: Name of the balancing pool.
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: memberName
+    #~ label: Member Name
+    #~ documentation: |
+      #~ Name of the member in format: /<partition name>/<node name>:<port>
+      #~ Example: /Common/abc_node:80
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: resultPropertySheet
+    #~ label: Result Property Sheet
+    #~ documentation: Results will be saved into this property/property sheet.
+    #~ required: true
+    #~ type: entry
+    #~ value: /myJob/poolMemberDelete
+
+#~ -
+  #~ name: Create Or Update Pool Member
+  #~ # https://clouddocs.f5.com/api/icontrol-rest/APIRef_tm_ltm_pool_members.html
+  #~ description: 'Sample procedure description'
+  #~ hasConfig: true
+  #~ parameters:
+  #~ -
+    #~ name: updateAction
+    #~ label: Update Action
+    #~ htmlDocumentation: |
+      #~ This parameter controls the update of a balancing pool member if one with the same name exists already:
+      #~ <ul><li><b><code>Do Nothing</code></b> <i>(Default)</i> -- Take no action, return silently.</li><li><b><code>Remove and Create</code></b> -- Remove existing balancing pool and Create a new one.</li><li><b><code>Selective Update</code></b> -- Update existing balancing pool for only parameters which have changed.</li><li><b><code>Throw exception</code></b> -- Do not update. Throw an error.</li></ul>
+    #~ type: select
+    #~ required: 1
+    #~ value: 0
+    #~ options:
+      #~ -
+        #~ name: Do Nothing
+        #~ value: 0
+      #~ -
+        #~ name: Selective Update
+        #~ value: PATCH
+      #~ -
+        #~ name: Remove and Create
+        #~ value: PUT
+      #~ -
+        #~ name: Throw exception
+        #~ value: ERROR
+  #~ -
+    #~ name: memberName
+    #~ label: Member Name
+    #~ required: true
+    #~ type: entry
+    #~ documentation: |
+      #~ Name of the member in format: /<partition name>/<node name>:<port>
+      #~ Example: /Common/abc_node:80
+  #~ -
+    #~ name: poolName
+    #~ label: Pool Name
+    #~ documentation: Name of the balancing pool.
+    #~ required: true
+    #~ type: entry
+  #~ -
+    #~ name: optionalParameters
+    #~ label: Optional Parameters
+    #~ documentation: |
+      #~ Available parameters:
+      #~ * description - User defined description.
+      #~ * address - IP address of a pool member if a node by the given name does not already exist.
+      #~ * appService - The application service to which the object belongs.
+      #~ * connectionLimit - Specifies the maximum number of concurrent connections allowed for a pool member. The default value is 0 (zero).
+      #~ * dynamicRatio - Specifies a range of numbers that you want the system to use in conjunction with the ratio load balancing method. The default value is 1.
+      #~ * ephemeral - Specifies if member is ephemeral.
+      #~ * inheritProfile - Specifies whether the pool member inherits the encapsulation profile from the parent pool. The default value is enabled. If you disable inheritance, no encapsulation takes place, unless you specify another encapsulation profile for the pool member using the profiles attribute.
+      #~ * logging - Specifies whether the pool member's monitor(s) actions will be logged. Logs are stored in /var/log/monitors/.
+      #~ * monitor - Displays the health monitors that are configured to monitor the pool member, and the status of each monitor. The default value is default.
+      #~ * priorityGroup - Specifies the priority group within the pool for this pool member. The priority group number specifies that traffic is directed to that member before being directed to a member of a lower priority. The default value is 0.
+      #~ * rateLimit - Specifies the maximum number of connections per second allowed for a pool member.
+      #~ * ratio - Specifies the ratio weight that you want to assign to the pool member. The default value is 1.
+      #~ * session - Enables or disables the pool member for new sessions. The default value is user-enabled.
+      #~ * state - user-down forces the pool member offline, overriding monitors. user-up reverts the user-down. When user-up, this displays the monitor state.
+      #~ * trafficAccelerationStatus - Not described in the official documentation. Please consult: F5 Support
+    #~ required: false
+    #~ type: textarea
+  #~ -
+    #~ name: resultPropertySheet
+    #~ label: Result Property Sheet
+    #~ documentation: Results will be saved into this property/property sheet.
+    #~ required: true
+    #~ type: entry
+    #~ value: /myJob/poolMemberCreateOrUpdate

@@ -1,0 +1,8 @@
+overview: Should be replaced with 'overview.md'
+
+proceduresPreface: |
+  <b>IMPORTANT</b> For all parameter descriptions in this section, required parameters are shown in <span class="required">bold italics</span>.<br/>
+
+proceduresOrder:
+  - Change Balancing Pool Member Status
+
