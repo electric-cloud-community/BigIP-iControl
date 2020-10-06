@@ -31,13 +31,13 @@ configuration:
   -
     name: hostname
     label: Hostname
-    documentation: Host name or IP-address of the BigIP instance.
+    documentation: Host name or IP address of the BigIP instance.
     required: true
     type: entry
   -
     name: port
     label: Port
-    documentation: Port number of the iControl SOAP instance. Please use 443 for HTTPS connection.
+    documentation: Port number of the BigIP instance. Please use 443 for HTTPS connection.
     required: true
     type: entry
     value: 443
