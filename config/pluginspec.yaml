@@ -31,19 +31,19 @@ configuration:
   -
     name: hostname
     label: Hostname
-    documentation: Host name or IP-address of the iControl SOAP instance.
+    documentation: Host name or IP-address of the BigIP instance.
     required: true
     type: entry
   -
     name: port
     label: Port
-    documentation: Port number of the iControl SOAP instance.
+    documentation: Port number of the iControl SOAP instance. Please use 443 for HTTPS connection.
     required: true
     type: entry
     value: 443
   -
     name: credential
-    documentation: A sample credential
+    documentation: Username and password to connect to your BigIP instance.
     required: true
     type: credential
     label: Credential
@@ -286,10 +286,13 @@ procedures:
     name: partitionName
     required: true
     type: entry
+    label: Partition Name
+    documentation: Name of the partition, e.g. Common.
+    value: Common
   -
     name: poolName
     label: Pool Name
-    documentation: Name of the balancing pool.
+    documentation: Name of the balancing pool, e.g. mypool.
     required: true
     type: entry
   -
@@ -306,7 +309,9 @@ procedures:
     name: setStatus
     label: Status
     htmlDocumentation: |
-      Desired status of the pool member.<br/>Details:<br/><ul><li><a href="https://devcentral.f5.com/articles/icontrol-rest-working-with-pool-members">iControl REST: Working with Pool Members</a></li><li><a href="https://support.f5.com/csp/article/K13310">K13310: Disabling nodes or pool members for maintenance (11.x - 14.x)</a></li></ul>
+      Desired status of the pool member.
+      Details:
+      <ul><li><a href="https://devcentral.f5.com/articles/icontrol-rest-working-with-pool-members">iControl REST: Working with Pool Members</a></li><li><a href="https://support.f5.com/csp/article/K13310">K13310: Disabling nodes or pool members for maintenance (11.x - 14.x)</a></li></ul>
     type: select
     required: true
     value: enabled
@@ -319,8 +324,8 @@ procedures:
         value: disabled
   -
     name: force
-    label: Force enable/disable
-    documentation: TODO
+    label: Force Connection Online/Offline
+    documentation: If checked, the connection monitors will be forced online/offline.
     type: checkbox
     initiallyChecked: false
     checkedValue: true
@@ -330,7 +335,8 @@ procedures:
   -
     name: doWait
     label: Wait For Existing Connections
-    documentation: "Wait for all active connections to close after disabling the node in the pool and before completing the step."
+    documentation: |
+      If checked, the procedure will wait until all existing connections are closed.
     required: false
     type: checkbox
     checkedValue: true
@@ -343,7 +349,7 @@ procedures:
     label: Sleep Interval
     documentation: Amount of seconds to wait between active connections checks.
     required: false
-    type: entry
+    type: integer
     value: 1
     dependsOn: setStatus, doWait, force
     condition: ${setStatus} == "disabled" AND ${doWait} == "true"
