@@ -316,7 +316,7 @@ class BigIPiControl extends FlowPlugin {
 
                     while (currentConnections > 0) {
                         log.info("Waiting for ${currentConnections} to close, sleep for ${sleepInterval} second(s)")
-                        sleep(sleepInterval * 1000L, { println("Waiting aborted!"); return true })
+                        sleep(sleepInterval * 1000L)
                         currentConnections = getPoolMemberActiveConnections(
                             [poolName] as String[],
                             [plainMembers] as CommonAddressPort[][]
