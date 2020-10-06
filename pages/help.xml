@@ -120,7 +120,7 @@
             
             <tr>
                 
-                    <td >Hostname</td>
+                    <td class="required">Hostname</td>
                     <td>Host name or IP-address of the iControl SOAP instance.</td>
                 
             </tr>
