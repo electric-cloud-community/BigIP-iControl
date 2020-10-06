@@ -1,6 +1,7 @@
 import com.cloudbees.flowpdf.*
 import iControl.CommonAddressPort
 import iControl.CommonEnabledState
+import iControl.CommonStatisticType
 import iControl.Interfaces
 
 
@@ -173,6 +174,35 @@ class BigIPiControl extends FlowPlugin {
 //        }
 //    }
 
+    private int getPoolMemberActiveConnections(String[] poolNames, CommonAddressPort[][] commonAddressPort) {
+        Long result = -1
+
+        def pools = interfaces
+            .getLocalLBPool()
+            .get_member_statistics(poolNames, commonAddressPort)
+
+        for (pool in pools) {
+            for (memberStatistics in pool.statistics) {
+                for (statistic in memberStatistics.statistics) {
+                    if (statistic.type == CommonStatisticType.STATISTIC_SERVER_SIDE_CURRENT_CONNECTIONS) {
+                        if (result == -1) {
+                            result = statistic.value.low
+                        } else {
+                            result = statistic.value.low + result
+                        }
+                        break
+                    }
+                }
+            }
+        }
+
+        if (result < 0) {
+            throw new RuntimeException("No nodes found")
+        }
+
+        return result
+    }
+
 /**
  * changeBalancingPoolMemberStatus - Change Balancing Pool Member Status/Change Balancing Pool Member Status
  * Add your code into this method and it will be called when the step runs
@@ -238,52 +268,66 @@ class BigIPiControl extends FlowPlugin {
 
         def pool = interfaces.getLocalLBPool()
 
-        CommonEnabledState state = (sp.setStatus == "enabled") ? CommonEnabledState.STATE_ENABLED : CommonEnabledState.STATE_DISABLED
+        boolean doEnable = true
+        if (sp.setStatus == "disabled") {
+            doEnable = false
+        } else if (sp.setStatus != "enabled") {
+            context.bailOut("Unknown desired status")
+        }
+
+        CommonEnabledState state = doEnable ? CommonEnabledState.STATE_ENABLED : CommonEnabledState.STATE_DISABLED
         def plainEnabledStates = []
         membersNames.each {
             plainEnabledStates.add(state)
         }
 
+        Long sleepInterval = Long.parseLong(sp.sleepInterval)
+        boolean doWait = sp.doWait
+
         String outcome = "success"
         String summary
         String data = ""
         try {
-            if (sp.setStatus == "enabled") {
-                log.info("Enable members...")
+            log.info(doEnable ? "Enable members..." : "Disable members...")
 
-                pool.set_member_session_enabled_state(
+            pool.set_member_session_enabled_state(
+                [poolName] as String[],
+                [plainMembers] as CommonAddressPort[][],
+                [plainEnabledStates] as CommonEnabledState[][]
+            )
+
+            if (sp.force) {
+                log.info(doEnable ? "Force on members..." : "Force off members...")
+
+                pool.set_member_monitor_state(
                     [poolName] as String[],
                     [plainMembers] as CommonAddressPort[][],
                     [plainEnabledStates] as CommonEnabledState[][]
                 )
 
-                summary = "Successfully enabled"
-            } else if ((sp.setStatus == "disabled") || (sp.setStatus == "force_off")) {
-                log.info("Disable members...")
-
-                pool.set_member_session_enabled_state(
-                    [poolName] as String[],
-                    [plainMembers] as CommonAddressPort[][],
-                    [plainEnabledStates] as CommonEnabledState[][]
-                )
-
-                if (sp.setStatus == "force_off") {
-                    log.info("Force off members...")
-
-                    pool.set_member_monitor_state(
+                summary = doEnable ? "Successfully forced online" : "Successfully forced offline"
+            } else {
+                if (!doEnable && doWait) {
+                    log.info("Waiting for existing connections")
+                    def currentConnections = getPoolMemberActiveConnections(
                         [poolName] as String[],
-                        [plainMembers] as CommonAddressPort[][],
-                        [plainEnabledStates] as CommonEnabledState[][]
+                        [plainMembers] as CommonAddressPort[][]
                     )
 
-                    summary = "Successfully forced offline"
-                } else {
-                    summary = "Successfully disabled"
+                    while (currentConnections > 0) {
+                        log.info("Waiting for ${currentConnections} to close, sleep for ${sleepInterval} second(s)")
+                        sleep(sleepInterval * 1000L, { println("Waiting aborted!"); return true })
+                        currentConnections = getPoolMemberActiveConnections(
+                            [poolName] as String[],
+                            [plainMembers] as CommonAddressPort[][]
+                        )
+                    }
                 }
-                log.info("Done")
-            } else {
-                throw new RuntimeException("Unknown desired status")
+
+                summary = doEnable ? "Successfully enabled" : "Successfully disabled"
             }
+
+            log.info("Done")
         } catch (Throwable e) {
             e.printStackTrace()
             log.error(e.getClass())

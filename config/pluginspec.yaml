@@ -295,7 +295,7 @@ procedures:
     name: membersNames
     label: Members Names
     documentation: |
-      Names of the members in format: <node name>:<port> one per line
+      Names of the members in format: "node name":"port" one per line
       Example:
         abc_node:80
         def_node:443
@@ -311,14 +311,41 @@ procedures:
     value: enabled
     options:
       -
-        name: Enabled (All traffic allowed)
+        name: Enabled
         value: enabled
       -
-        name: Disabled (Only persistent or active connections allowed)
+        name: Disabled
         value: disabled
-      -
-        name: Forced Offline (Only active connections allowed)
-        value: force_off
+  -
+    name: force
+    label: Force enable/disable
+    documentation: TODO
+    type: checkbox
+    initiallyChecked: false
+    checkedValue: true
+    uncheckedValue: false
+    required: false
+
+  -
+    name: doWait
+    label: Wait For Existing Connections
+    documentation: "Wait for all active connections to close after disabling the node in the pool and before completing the step."
+    required: false
+    type: checkbox
+    checkedValue: true
+    uncheckedValue: false
+    initiallyChecked: false
+    dependsOn: setStatus
+    condition: ${setStatus} == "disabled" AND force == "false"
+  -
+    name: sleepInterval
+    label: Sleep Interval
+    documentation: Amount of seconds to wait between active connections checks.
+    required: false
+    type: entry
+    value: 1
+    dependsOn: setStatus, doWait, force
+    condition: ${setStatus} == "disabled" AND ${doWait} == "true"
   #~ -
     #~ name: resultPropertySheet
     #~ label: Result Property Sheet
