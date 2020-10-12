@@ -6,6 +6,7 @@ pluginInfo:
   supportUrl: 'https://electric-cloud.com/support'
   category: 'Resource Management'
   shell: 'ec-groovy'
+  repositoryUrl: 'https://github.com/electric-cloud-community/BigIP-iControl'
 
 # Plugin configuration description
 configuration:

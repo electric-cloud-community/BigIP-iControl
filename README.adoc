@@ -46,19 +46,19 @@ To create plugin configurations in CloudBees CD, do these steps:
 |===
 |Parameter |Description
 
-|Configuration Name | The name for the created configuration
+|__**Configuration Name**__ | The name for the created configuration
 
 
 |Description | Description for the configuration
 
 
-|Hostname | Host name or IP address of the BigIP instance.
+|__**Hostname**__ | Host name or IP address of the BigIP instance.
 
 
-|Port | Port number of the BigIP instance. Please use 443 for HTTPS connection.
+|__**Port**__ | Port number of the BigIP instance. Please use 443 for HTTPS connection.
 
 
-|Credential | Username and password to connect to your BigIP instance.
+|__**Credential**__ | Username and password to connect to your BigIP instance.
 
 
 |Check Connection? | If checked, the connection endpoint and credentials entered as part of the configuration will be tested. If this option is checked, configuration will not be saved if the test fails.
@@ -80,7 +80,7 @@ image::htdocs/images/createConfiguration.png[image]
 [[procedures]]
 == Plugin Procedures
 
-<b>IMPORTANT</b> For all parameter descriptions in this section, required parameters are shown in <span class="required">bold italics</span>.<br/>
+*IMPORTANT* For all parameter descriptions in this section, required parameters are shown in **bold italics**.
 
 
 
@@ -97,23 +97,23 @@ This procedure will turn the specified pool members on and off.
 |===
 | Parameter | Description
 
-| Configuration Name | Previously defined configuration for the plugin
+| __**Configuration Name**__ | Previously defined configuration for the plugin
 
 
-| Partition Name | Name of the partition, e.g. Common.
+| __**Partition Name**__ | Name of the partition, e.g. Common.
 
 
-| Pool Name | Name of the balancing pool, e.g. mypool.
+| __**Pool Name**__ | Name of the balancing pool, e.g. mypool.
 
 
-| Members Names | Names of the members in format: "node name":"port" one per line
+| __**Members Names**__ | Names of the members in format: "node name":"port" one per line
 Example:
   abc_node:80
   def_node:443
 
 
 
-| Status | Desired status of the pool member.
+| __**Status**__ | Desired status of the pool member.
 Details:
 
 
@@ -161,9 +161,8 @@ image::htdocs/images/changeBalancingPoolMemberStatus2.png[image]
 === BigIP-iControl 1.0.0
 
 - Initial Version. The following procedures were added:
-<ul>
-    <li>Change Balancing Pool Member Status</li>
-</ul>
+
+** Change Balancing Pool Member Status
 
 
 
