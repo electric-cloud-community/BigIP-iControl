@@ -6,7 +6,7 @@ import com.cloudbees.flowpdf.StepParameters
 
 class ChangeBalancingPoolMemberStatusParameters {
     /**
-    * Label: , type: entry
+    * Label: Partition Name, type: entry
     */
     String partitionName
     /**
@@ -22,7 +22,7 @@ class ChangeBalancingPoolMemberStatusParameters {
     */
     String setStatus
     /**
-    * Label: Force enable/disable, type: checkbox
+    * Label: Force Connection Online/Offline, type: checkbox
     */
     boolean force
     /**
@@ -30,7 +30,7 @@ class ChangeBalancingPoolMemberStatusParameters {
     */
     boolean doWait
     /**
-    * Label: Sleep Interval, type: entry
+    * Label: Sleep Interval, type: integer
     */
     String sleepInterval
 
@@ -55,4 +55,4 @@ class ChangeBalancingPoolMemberStatusParameters {
         return parameters
     }
 }
-// DO NOT EDIT THIS BLOCK ABOVE ^^^=== Parameters ends, checksum: d48d43e3162f5841a481b1b36bb6389f ===
+// DO NOT EDIT THIS BLOCK ABOVE ^^^=== Parameters ends, checksum: e7bbb4b698b6aaf086330e0b1a448e6d ===

@@ -1,2 +1,7 @@
 1.0.0:
-  - First release.
+  - |
+    Initial Version. The following procedures were added:
+    <ul>
+        <li>Change Balancing Pool Member Status</li>
+    </ul>
+

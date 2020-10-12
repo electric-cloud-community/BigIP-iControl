@@ -14,7 +14,7 @@
     <h1>@PLUGIN_KEY@</h1>
     <p>Plugin version @PLUGIN_VERSION@</p>
     
-    <p>Revised on October 06, 2020</p>
+    <p>Revised on October 12, 2020</p>
     
     <hr style="margin-left: -10px; margin-top: 10px; height: 1px; width: 100%; color: #5981BD;" noshade="noshade"/>
     <h1>Contents</h1>
@@ -121,21 +121,21 @@
             <tr>
                 
                     <td class="required">Hostname</td>
-                    <td>Host name or IP-address of the iControl SOAP instance.</td>
+                    <td>Host name or IP address of the BigIP instance.</td>
                 
             </tr>
             
             <tr>
                 
                     <td class="required">Port</td>
-                    <td>Port number of the iControl SOAP instance.</td>
+                    <td>Port number of the BigIP instance. Please use 443 for HTTPS connection.</td>
                 
             </tr>
             
             <tr>
                 
                     <td class="required">Credential</td>
-                    <td>A sample credential</td>
+                    <td>Username and password to connect to your BigIP instance.</td>
                 
             </tr>
             
@@ -181,7 +181,7 @@
         <h2>Change Balancing Pool Member Status</h2>
         
         
-        null
+        <p>This procedure will turn the specified pool members on and off.</p>
         
         
         <h3>Change Balancing Pool Member Status Parameters</h3>
@@ -203,15 +203,15 @@
             
             <tr>
                 
-                <td class="required">partitionName</td>
-                <td>null</td>
+                <td class="required">Partition Name</td>
+                <td>Name of the partition, e.g. Common.</td>
                 
             </tr>
             
             <tr>
                 
                 <td class="required">Pool Name</td>
-                <td>Name of the balancing pool.</td>
+                <td>Name of the balancing pool, e.g. mypool.</td>
                 
             </tr>
             
@@ -229,22 +229,25 @@ Example:
             <tr>
                 
                 <td class="required">Status</td>
-                <td>Desired status of the pool member.<br/>Details:<br/><ul><li><a href="https://devcentral.f5.com/articles/icontrol-rest-working-with-pool-members">iControl REST: Working with Pool Members</a></li><li><a href="https://support.f5.com/csp/article/K13310">K13310: Disabling nodes or pool members for maintenance (11.x - 14.x)</a></li></ul>
+                <td>Desired status of the pool member.
+Details:
+<ul><li><a href="https://devcentral.f5.com/articles/icontrol-rest-working-with-pool-members">iControl REST: Working with Pool Members</a></li><li><a href="https://support.f5.com/csp/article/K13310">K13310: Disabling nodes or pool members for maintenance (11.x - 14.x)</a></li></ul>
 </td>
                 
             </tr>
             
             <tr>
                 
-                <td >Force enable/disable</td>
-                <td>TODO</td>
+                <td >Force Connection Online/Offline</td>
+                <td>If checked, the connection monitors will be forced online/offline.</td>
                 
             </tr>
             
             <tr>
                 
                 <td >Wait For Existing Connections</td>
-                <td>Wait for all active connections to close after disabling the node in the pool and before completing the step.</td>
+                <td>If checked, the procedure will wait until all existing connections are closed.
+</td>
                 
             </tr>
             
@@ -291,7 +294,11 @@ Example:
     <h3>@PLUGIN_KEY@ 1.0.0</h3>
     <ul>
         
-        <li>First release.</li>
+        <li>Initial Version. The following procedures were added:
+<ul>
+    <li>Change Balancing Pool Member Status</li>
+</ul>
+</li>
         
     </ul>
     
