@@ -285,10 +285,10 @@ procedures:
   parameters:
   -
     name: partitionName
-    required: true
-    type: entry
     label: Partition Name
     documentation: Name of the partition, e.g. Common.
+    required: true
+    type: entry
     value: Common
   -
     name: poolName
