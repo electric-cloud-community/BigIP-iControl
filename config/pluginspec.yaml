@@ -7,6 +7,8 @@ pluginInfo:
   category: 'Resource Management'
   repositoryUrl: https://github.com/electric-cloud-community/BigIP-iControl
   shell: 'ec-groovy'
+  detailedDescription: 'This plugin allows to work with F5 Big-IP via iControl SOAP API.'
+  label: BigIP iControl
 
 # Plugin configuration description
 configuration:
