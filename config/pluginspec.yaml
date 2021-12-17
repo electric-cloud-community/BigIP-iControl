@@ -1,12 +1,11 @@
 pluginInfo:
   pluginName: 'BigIP-iControl'
-  version: '1.0.0'
+  version: '1.0.1'
   description: 'This plugin allows to work with F5 Big-IP via iControl SOAP API.'
   author: 'CloudBees'
   supportUrl: 'https://electric-cloud.com/support'
   category: 'Resource Management'
   shell: 'ec-groovy'
-  repositoryUrl: 'https://github.com/electric-cloud-community/BigIP-iControl'
 
 # Plugin configuration description
 configuration:
