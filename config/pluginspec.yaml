@@ -5,6 +5,7 @@ pluginInfo:
   author: 'CloudBees'
   supportUrl: 'https://electric-cloud.com/support'
   category: 'Resource Management'
+  repositoryUrl: https://github.com/electric-cloud-community/BigIP-iControl
   shell: 'ec-groovy'
 
 # Plugin configuration description
