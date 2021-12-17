@@ -1,6 +1,6 @@
-Plugin version 1.0.0
+Plugin version 1.0.1
 
-Revised on October 12, 2020
+Revised on December 17, 2021
 
 
 
@@ -8,7 +8,7 @@ Revised on October 12, 2020
 
 == Overview
 
-This plugin allows to work with F5 Big-IP via iControl SOAP API.
+Should be replaced with 'overview.md'
 
 
 
@@ -20,7 +20,8 @@ This plugin allows to work with F5 Big-IP via iControl SOAP API.
 
 
 
-== Plugin Configurations
+== Plugin configurations
+
 Plugin configurations are sets of parameters that apply
 across some or all of the plugin procedures. They
 reduce repetition of common values, create
@@ -30,18 +31,20 @@ is given a unique name that is entered in designated
 parameters on procedures that use them.
 
 
-=== Creating Plugin Configurations
+=== Creating plugin configurations
+
 To create plugin configurations in CloudBees CD, do these steps:
 
-* Go to **Administration** &gt;**Plugins** to open the Plugin Manager.
-* Find the BigIP-iControl-1.0.0 row.
+* Go to Adminstration -> Plugins to open the Plugin Manager.
+* Find the BigIP-iControl-1.0.1 row.
 * Click *Configure* to open the
      Configurations page.
 * Click *Create Configuration* as per the description of parameters below.
 
 
 
-=== Configuration Procedure Parameters
+=== Configuration procedure parameters
+
 [cols=",",options="header",]
 |===
 |Parameter |Description
@@ -69,18 +72,16 @@ To create plugin configurations in CloudBees CD, do these steps:
 
 |===
 
-== Configuration Form
-
-image::htdocs/images/createConfiguration.png[image]
-
 
 
 
 
 [[procedures]]
-== Plugin Procedures
+== Plugin procedures
 
-*IMPORTANT* For all parameter descriptions in this section, required parameters are shown in **bold italics**.
+
+**IMPORTANT** For all parameter descriptions in this section, required parameters are shown in __**bold italics**__.
+
 
 
 
@@ -92,10 +93,10 @@ This procedure will turn the specified pool members on and off.
 
 
 
-==== Change Balancing Pool Member Status Parameters
+==== Change Balancing Pool Member Status parameters
 [cols=",",options="header",]
 |===
-| Parameter | Description
+|Parameter |Description
 
 | __**Configuration Name**__ | Previously defined configuration for the plugin
 
@@ -134,11 +135,6 @@ Details:
 
 
 
-
-== Change Balancing Pool Member Status Form
-
-image::htdocs/images/changeBalancingPoolMemberStatus1.png[image]
-image::htdocs/images/changeBalancingPoolMemberStatus2.png[image]
 
 
 
